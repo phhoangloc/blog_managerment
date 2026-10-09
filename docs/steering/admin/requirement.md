@@ -1,6 +1,6 @@
 # Requirement: admin (Next.js admin panel)
 
-Source: `ideas/admin-idea.md`, layout from the Claude Design project "Blog Admin Template" (Organic design system: cream/terracotta/sage palette, pill buttons, rounded sidebar, Paytone One headings).
+Source: `docs/ideas/admin-idea.md`, layout from the Claude Design project "Blog Admin Template" (Organic design system: cream/terracotta/sage palette, pill buttons, rounded sidebar, Paytone One headings).
 
 ## Goal
 A web admin panel in `/admin` that talks to the existing `/backend` REST API. Only a logged-in admin can use it.

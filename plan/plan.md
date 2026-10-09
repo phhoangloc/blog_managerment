@@ -1,7 +1,7 @@
 # Plan: User-management REST API (backend)
 
 ## Context
-Greenfield project (`blog_managerment`, no code yet). Spec: `ideas/initital-idea.md` (copied to `docs/spec/spec.md`). Build a basic RESTful API in `/backend` with Node.js + Express + TypeScript + MySQL via Prisma. Admins log in, CRUD users, upload/delete files; users log in and upload files. Files are stored in `/public/upload` and addressed by URL built from name. Layering: controller -> service -> repository, SOLID, design patterns. Environment: Node 22, npm 11; **MySQL is not installed locally**, so tests mock repositories (no DB needed); DB access is verified via `prisma validate`/`generate` and, if the user supplies a DB in `.env`, `prisma migrate`.
+Greenfield project (`blog_managerment`, no code yet). Spec: `docs/ideas/initital-idea.md` (copied to `docs/spec/spec.md`). Build a basic RESTful API in `/backend` with Node.js + Express + TypeScript + MySQL via Prisma. Admins log in, CRUD users, upload/delete files; users log in and upload files. Files are stored in `/public/upload` and addressed by URL built from name. Layering: controller -> service -> repository, SOLID, design patterns. Environment: Node 22, npm 11; **MySQL is not installed locally**, so tests mock repositories (no DB needed); DB access is verified via `prisma validate`/`generate` and, if the user supplies a DB in `.env`, `prisma migrate`.
 
 Assumptions (flag if wrong): JWT auth (bcrypt password hashing); separate `admin`/`user` tables, login body has `role`; `file.name` unique and used as URL (`/public/upload/<name>`), `detail` = description; file also stores stored filename/uploader; tests with Jest + ts-jest + supertest-free unit tests (service + middleware).
 

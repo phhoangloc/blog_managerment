@@ -3,7 +3,7 @@
 description: Workflow for adding a new project
 ---
 - Save under the `/[project-name]` folder.
-- Read `/ideas/[project-name]-idea.md`.
+- Read `/docs/ideas/[project-name]-idea.md`.
 - Check whether the `/backend` folder already exists. 
 ## Phase 1: if `/backend` does not exist yet
 - /add-feature

@@ -1,4 +1,4 @@
-# Requirement: blog-20261008 (ideas/blog-idea.md)
+# Requirement: blog-20261008 (docs/ideas/blog-idea.md)
 
 ## Backend
 Table `blog`: title, slug, detail, category, draft (default true), cover (file.id), author.

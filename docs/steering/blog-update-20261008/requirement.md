@@ -1,4 +1,4 @@
-# Requirement: blog-update-20261008 (ideas/blog-idea.md changed)
+# Requirement: blog-update-20261008 (docs/ideas/blog-idea.md changed)
 
 ## Changes
 1. **Admin can only edit and delete blogs** - admin no longer creates blogs. Admin still sees all blogs.

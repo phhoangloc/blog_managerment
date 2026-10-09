@@ -1,4 +1,4 @@
-# Requirement: home (ideas/home.md)
+# Requirement: home (docs/ideas/home-idea.md)
 
 Public reader site in `/home` (Next.js + TypeScript + Tailwind). Layout/tokens taken from the Claude Design project
 "locpham design system" (Summer Ocean Breeze palette, Newsreader/Geist/JetBrains Mono, fixed transparent header with
