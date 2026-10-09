@@ -1,0 +1,12 @@
+# secrets and local config
+.env
+.env.local
+.env.*.local
+.mcp.json
+.claude/settings.local.json
+
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
+next-env.d.ts

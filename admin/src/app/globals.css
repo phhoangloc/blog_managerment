@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+/* Organic design system tokens (from the Blog Admin Template design) */
+:root {
+  --color-bg: #f5ead8;
+  --color-surface: #ebddc5;
+  --color-text: #201e1d;
+  --color-accent: #c67139;
+  --color-sage: #7a8a5e;
+  --color-divider: color-mix(in srgb, #201e1d 16%, transparent);
+
+  --color-neutral-100: #f9f4ed;
+  --color-neutral-200: #eee7db;
+  --color-neutral-300: #dcd3c4;
+  --color-neutral-400: #c0b6a5;
+  --color-neutral-700: #645c50;
+  --color-neutral-800: #474238;
+  --color-neutral-900: #2e2b25;
+
+  --color-accent-100: #fff2eb;
+  --color-accent-200: #ffe1d0;
+  --color-accent-300: #ffc6a5;
+  --color-accent-600: #b2622d;
+  --color-accent-700: #8c491a;
+  --color-accent-800: #643312;
+
+  --color-sage-100: #f0fae1;
+  --color-sage-300: #ccdbb2;
+  --color-sage-800: #3d472b;
+  --color-sage-900: #272e1b;
+
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-ink: var(--color-text);
+  --color-accent: var(--color-accent);
+  --color-accent-100: var(--color-accent-100);
+  --color-accent-200: var(--color-accent-200);
+  --color-accent-300: var(--color-accent-300);
+  --color-accent-600: var(--color-accent-600);
+  --color-accent-700: var(--color-accent-700);
+  --color-accent-800: var(--color-accent-800);
+  --color-sage: var(--color-sage);
+  --color-sage-100: var(--color-sage-100);
+  --color-sage-300: var(--color-sage-300);
+  --color-sage-800: var(--color-sage-800);
+  --color-sage-900: var(--color-sage-900);
+  --color-neutral-100: var(--color-neutral-100);
+  --color-neutral-200: var(--color-neutral-200);
+  --color-neutral-300: var(--color-neutral-300);
+  --color-neutral-400: var(--color-neutral-400);
+  --color-neutral-700: var(--color-neutral-700);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.12;
+}
+
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — components — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none; border: 1px solid transparent;
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 14px; line-height: 1.2; color: var(--color-text); background: transparent;
+  padding: 9px 20px; border-radius: 999px;
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover:not(:disabled) { background: var(--color-accent-600); }
+.btn-primary:active:not(:disabled) { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover:not(:disabled) { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-ghost { color: var(--color-accent-700); padding-inline: 10px; }
+.btn-ghost:hover:not(:disabled) { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-danger { background: #a63a2a; color: #fff; }
+.btn-danger:hover:not(:disabled) { background: #8a2f21; }
+
+.field > label { display: block; font-size: 12px; margin-bottom: 5px; color: color-mix(in srgb, var(--color-text) 70%, transparent); }
+.input {
+  width: 100%; min-height: 40px; padding: 6px 14px; font: inherit; font-size: 14px;
+  color: var(--color-text); caret-color: var(--color-accent); background: #fff;
+  border: 1px solid var(--color-divider); border-radius: 999px;
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+
+.card { padding: 22px; border-radius: 32px; background: var(--color-surface); }
+.card-kicker { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 600; }
+
+.tag { display: inline-flex; align-items: center; font-size: 12px; padding: 3px 12px; border-radius: 999px; }
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-sage { background: var(--color-sage-100); color: var(--color-sage-800); }
+.tag-neutral { background: var(--color-neutral-200); color: var(--color-neutral-800); }
+
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: 10px 12px; border-bottom: 1px solid var(--color-divider);
+}
+.table td { padding: 12px; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); }
+
+.dialog-backdrop {
+  position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px;
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent); overflow: auto;
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: 14px; padding: 24px;
+  border-radius: 32px; background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-wide { width: min(720px, 100%); }
+
+.washed { filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94); }
+
+/* rich text content */
+.rich h1 { font-size: 30px; margin: 0.6em 0 0.3em; }
+.rich h2 { font-size: 25px; margin: 0.6em 0 0.3em; }
+.rich h3 { font-size: 21px; margin: 0.6em 0 0.3em; }
+.rich h4 { font-size: 18px; margin: 0.6em 0 0.3em; }
+.rich h5 { font-size: 16px; margin: 0.6em 0 0.3em; }
+.rich a { color: var(--color-accent-700); text-decoration: underline; }
+.rich img { max-width: 100%; border-radius: 16px; margin: 8px 0; }
+.rich p { margin: 0 0 0.6em; }

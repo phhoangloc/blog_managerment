@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* Palette: "Summer Ocean Breeze" — from the locpham design system */
+:root {
+  --paper-0: #ffffff; --paper-1: #f9fdf8; --paper-2: #edf6eb;
+  --ink-1: #1d3557; --ink-2: #3a5272; --ink-3: #5a7089; --ink-4: #93a3b5;
+  --rule: #cfe0d6;
+  --sea-100: #a8dadc; --sea-300: #7fb6c4; --sea-500: #457b9d; --sea-900: #1d3557;
+  --accent: #d02f3c; --accent-hover: #a8222e; --on-accent: #ffffff;
+  --success: #2e7354;
+
+  --bg-page: var(--paper-1); --bg-raised: var(--paper-0); --bg-sunken: var(--paper-2);
+  --text-body: var(--ink-1); --text-muted: var(--ink-2); --text-subtle: var(--ink-3); --text-faint: var(--ink-4);
+  --text-link: var(--sea-500); --text-link-hover: var(--sea-900);
+  --border-default: var(--rule);
+  --text-reading: #34495f; --text-reading-muted: #506378;
+  --highlight: var(--sea-100);
+
+  --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-ui: var(--font-inter), "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "SFMono-Regular", ui-monospace, monospace;
+  --tracking-display: -0.015em;
+  --tracking-caps: 0.08em;
+  --content-width: 680px;
+  --page-gutter: 24px;
+  --radius-2: 6px; --radius-3: 10px;
+  --shadow-1: 0 1px 0 rgba(29, 53, 87, 0.06);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --bg-page: #12223a; --bg-raised: #1d3557; --bg-sunken: #0c1829;
+  --text-body: #f1faee; --text-muted: #c6dadb; --text-subtle: #8fa8b9; --text-faint: #5f7891;
+  --text-link: #a8dadc; --text-link-hover: #d2eeef;
+  --border-default: #2a4466;
+  --accent: #e63946; --accent-hover: #ee5a65;
+  --text-reading: #d9e4dd; --text-reading-muted: #a9bcc4;
+  --highlight: #2e5878;
+}
+
+html { background: var(--bg-page); }
+body {
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--text-body);
+  font-family: var(--font-ui);
+  transition: background 180ms var(--ease-out), color 180ms var(--ease-out);
+}
+/* in a layer so Tailwind utilities (text-white, text-[...]) can override the default link colour */
+@layer base {
+  a { color: var(--text-link); }
+  a:hover { color: var(--text-link-hover); }
+}
+
+/* rich-text body of a blog */
+.prose-blog { font: 400 19px/1.75 var(--font-serif); color: var(--text-reading); overflow-wrap: anywhere; }
+/* editor content uses <div> per line and <div><br></div> for a blank line, so divs get no margin of their own */
+.prose-blog div { margin: 0; }
+.prose-blog :where(p, ul, ol, blockquote, pre, figure, table) { margin: 1.1em 0; }
+.prose-blog > :first-child { margin-top: 0; }
+.prose-blog h1, .prose-blog h2, .prose-blog h3, .prose-blog h4, .prose-blog h5, .prose-blog h6 { font-weight: 500; line-height: 1.2; letter-spacing: var(--tracking-display); color: var(--text-body); margin: 1.6em 0 0.5em; }
+.prose-blog h4, .prose-blog h5, .prose-blog h6 { font-size: 20px; }
+.prose-blog h1 { font-size: 36px; } .prose-blog h2 { font-size: 28px; } .prose-blog h3 { font-size: 22px; }
+.prose-blog blockquote { margin-left: 0; padding-left: 20px; border-left: 3px solid var(--sea-300); font-style: italic; color: var(--text-reading-muted); }
+.prose-blog pre { padding: 16px; border-radius: var(--radius-2); background: var(--bg-sunken); overflow-x: auto; font: 400 14px/1.6 var(--font-mono); }
+.prose-blog code { font-family: var(--font-mono); font-size: 0.85em; }
+.prose-blog mark { background: var(--highlight); color: inherit; padding: 0 2px; }
+.prose-blog hr { border: 0; border-top: 1px solid var(--border-default); margin: 2em 0; }
+.prose-blog img { max-width: 100%; height: auto; border-radius: var(--radius-2); }
+.prose-blog ul, .prose-blog ol { padding-left: 1.4em; }
+.prose-blog a { text-decoration: underline; text-underline-offset: 3px; }

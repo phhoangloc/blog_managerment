@@ -1,0 +1,3 @@
+# Structure
+Backend: `prisma/schema.prisma` (avatarId + relations, migration), `repositories/*` (admin full CRUD, avatarId), `validators/schemas.ts` (avatarId), `services/AdminService.ts` (new), `services/UserService.ts` + `AdminService` resolve avatarUrl via `IFileRepository`, `controllers/AdminController.ts` (new), `routes/index.ts`, tests `AdminService.test.ts`, `UserService.test.ts`.
+Admin web: `components/AccountForm.tsx`, `components/Avatar.tsx`, `AccountMenu.tsx` (both roles), `Sidebar.tsx` (+Admin), pages `admins/page.tsx`, `admins/new`, `admins/[id]/edit`, `user/new`, user list/edit with avatar.

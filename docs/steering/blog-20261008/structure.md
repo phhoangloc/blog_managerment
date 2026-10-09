@@ -1,0 +1,3 @@
+# Structure: blog-20261008
+Backend: `prisma/schema.prisma` (Blog + relations, migration), `utils/slugify.ts`, `repositories/interfaces.ts` + `prismaRepositories.ts` (IBlogRepository), `validators/schemas.ts` (create/updateBlogSchema), `services/BlogService.ts` (permissions, slug, cover/author resolving), `controllers/BlogController.ts`, `routes/index.ts`, tests `BlogService.test.ts`, `slugify.test.ts`, schema cases in validate test.
+Admin web: `lib/upload.ts`, `lib/types.ts` (Blog), `components/BlogForm.tsx`, `Sidebar.tsx` (+Blog), `AuthGuard.tsx` (users may use /blog), pages `blog/page.tsx`, `blog/new/page.tsx`, `blog/[slug]/view/page.tsx`, `blog/[slug]/edit/page.tsx`.

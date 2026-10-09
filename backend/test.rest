@@ -1,0 +1,233 @@
+@baseUrl = http://localhost:4000
+@adminUser = adminuser
+@adminPass = admin123
+
+### ===== AUTH =====
+
+### Admin login
+# @name adminLogin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "role": "admin",
+  "username": "{{adminUser}}",
+  "password": "{{adminPass}}"
+}
+
+###
+@adminToken = {{adminLogin.response.body.token}}
+
+### User login (create the user first)
+# @name userLogin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "role": "user",
+  "username": "testuser1",
+  "password": "secret123"
+}
+
+###
+@userToken = {{userLogin.response.body.token}}
+
+### Login with invalid data (expect 400)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "role": "admin",
+  "username": "ab",
+  "password": "x"
+}
+
+### ===== USERS (admin only) =====
+
+### List users
+GET {{baseUrl}}/api/users
+Authorization: Bearer {{adminToken}}
+
+### Create user
+POST {{baseUrl}}/api/users
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "username": "testuser1",
+  "password": "secret123",
+  "email": "testuser1@example.com"
+}
+
+### Get user by id
+GET {{baseUrl}}/api/users/1
+Authorization: Bearer {{adminToken}}
+
+### Update user
+PUT {{baseUrl}}/api/users/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "email": "updated@example.com"
+}
+
+### Delete user
+DELETE {{baseUrl}}/api/users/1
+Authorization: Bearer {{adminToken}}
+
+### No token (expect 401)
+GET {{baseUrl}}/api/users
+
+### User token on admin route (expect 403)
+GET {{baseUrl}}/api/users
+Authorization: Bearer {{userToken}}
+
+### ===== FILES =====
+
+### List files
+GET {{baseUrl}}/api/files
+Authorization: Bearer {{adminToken}}
+
+### Upload file as admin (expect 403: only users upload)
+POST {{baseUrl}}/api/files
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="name"
+
+sample-file
+------Boundary
+Content-Disposition: form-data; name="detail"
+
+A sample upload
+------Boundary
+Content-Disposition: form-data; name="file"; filename="sample.txt"
+Content-Type: text/plain
+
+< ./sample.txt
+------Boundary--
+
+### Upload file as user
+POST {{baseUrl}}/api/files
+Authorization: Bearer {{userToken}}
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="name"
+
+user-file
+------Boundary
+Content-Disposition: form-data; name="detail"
+
+Uploaded by a user
+------Boundary
+Content-Disposition: form-data; name="file"; filename="sample.txt"
+Content-Type: text/plain
+
+< ./sample.txt
+------Boundary--
+
+### Download an uploaded file (URL built from the name)
+GET {{baseUrl}}/public/upload/sample-file.txt
+
+### Delete file (admin only)
+DELETE {{baseUrl}}/api/files/2
+Authorization: Bearer {{adminToken}}
+
+### Delete file as a user who does not own it (expect 403)
+DELETE {{baseUrl}}/api/files/2
+Authorization: Bearer {{userToken}}
+
+### ===== ADMINS (admin only) =====
+
+### List admins
+GET {{baseUrl}}/api/admins
+Authorization: Bearer {{adminToken}}
+
+### Create admin
+POST {{baseUrl}}/api/admins
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "username": "second_admin",
+  "password": "secret123",
+  "email": "second@example.com"
+}
+
+### My admin profile
+GET {{baseUrl}}/api/admins/me
+Authorization: Bearer {{adminToken}}
+
+### Update my admin profile
+PUT {{baseUrl}}/api/admins/me
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "email": "admin-new@example.com"
+}
+
+### Delete admin (not yourself)
+DELETE {{baseUrl}}/api/admins/2
+Authorization: Bearer {{adminToken}}
+
+### ===== USER SELF-SERVICE =====
+
+### My user profile
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{userToken}}
+
+### Update my user profile
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "email": "me-new@example.com"
+}
+
+### ===== BLOGS =====
+
+### List blogs (admin: all, user: own)
+GET {{baseUrl}}/api/blogs
+Authorization: Bearer {{userToken}}
+
+### Create blog (slug generated from the title; draft defaults to true)
+POST {{baseUrl}}/api/blogs
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "My First Post",
+  "detail": "<p>Hello</p>",
+  "category": "Tech"
+}
+
+### Get blog by slug
+GET {{baseUrl}}/api/blogs/my-first-post
+Authorization: Bearer {{userToken}}
+
+### Publish blog (coverId = file id, null removes it)
+PUT {{baseUrl}}/api/blogs/my-first-post
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "draft": false
+}
+
+### Admin can edit any blog
+PUT {{baseUrl}}/api/blogs/my-first-post
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "category": "News"
+}
+
+### Delete blog
+DELETE {{baseUrl}}/api/blogs/my-first-post
+Authorization: Bearer {{userToken}}

@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  email     String   @unique
+  avatarId  Int?
+  avatar    File?    @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: SetNull)
+  blogs     Blog[]   @relation("BlogAuthor")
+  files     File[]   @relation("FileOwner")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([avatarId])
+  @@map("user")
+}
+
+model File {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  detail       String   @default("") @db.Text
+  filename     String
+  // owner; null only for legacy files uploaded by an admin before uploads became user-only
+  userId       Int?
+  owner        User?    @relation("FileOwner", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  userAvatars  User[]   @relation("UserAvatar")
+  blogCovers   Blog[]   @relation("BlogCover")
+
+  @@index([userId])
+  @@map("file")
+}
+
+model Blog {
+  id         Int      @id @default(autoincrement())
+  title      String
+  slug       String   @unique
+  detail     String   @default("") @db.Text
+  category   String   @default("General")
+  draft      Boolean  @default(true)
+  coverId    Int?
+  cover      File?    @relation("BlogCover", fields: [coverId], references: [id], onDelete: SetNull)
+  authorId   Int
+  author     User     @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([coverId])
+  @@index([authorId])
+  @@map("blog")
+}
