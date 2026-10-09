@@ -3,6 +3,7 @@ import {
   createBlogSchema,
   createCommentSchema,
   createUserSchema,
+  googleLoginSchema,
   likeSchema,
   loginSchema,
   updateBlogSchema,
@@ -73,5 +74,11 @@ describe('validateBody', () => {
     expect(run(likeSchema, { like: true }).next).toHaveBeenCalledWith();
     expect(run(likeSchema, { like: 'true' }).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
     expect(run(likeSchema, {}).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
+  });
+
+  it('google login needs a non-empty idToken', () => {
+    expect(run(googleLoginSchema, { idToken: 'abc' }).next).toHaveBeenCalledWith();
+    expect(run(googleLoginSchema, { idToken: '' }).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
+    expect(run(googleLoginSchema, {}).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
   });
 });

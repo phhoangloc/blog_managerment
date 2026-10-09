@@ -10,6 +10,8 @@ export const loginSchema = z.object({
   password,
 });
 
+export const googleLoginSchema = z.object({ idToken: z.string().min(1, 'idToken is required') });
+
 // avatar is a file id; null removes it
 const avatarId = z.number().int().positive().nullable();
 

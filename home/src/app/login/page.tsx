@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
 import { API_URL } from "@/lib/api";
+import GoogleButton, { GOOGLE_CLIENT_ID } from "@/components/GoogleButton";
 import { setToken } from "@/lib/auth";
 
 // Readers log in as a `user` account to like and comment
@@ -13,6 +14,29 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  // store the token and go back to where the reader came from; only a local path is followed, never an arbitrary url
+  function finish(token: string) {
+    setToken(token);
+    const next = params.get("next");
+    router.replace(next && next.startsWith("/") && !next.startsWith("//") ? next : "/");
+  }
+
+  async function loginWithGoogle(idToken: string) {
+    setError("");
+    try {
+      const res = await fetch(`${API_URL}/api/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Google login failed");
+      finish(data.token);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Google login failed");
+    }
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -26,10 +50,7 @@ function LoginForm() {
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error ?? "Login failed");
-      setToken(data.token);
-      // only follow a local path, never an arbitrary url
-      const next = params.get("next");
-      router.replace(next && next.startsWith("/") && !next.startsWith("//") ? next : "/");
+      finish(data.token);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -65,6 +86,16 @@ function LoginForm() {
           {busy ? "Logging in…" : "Log in"}
         </button>
       </form>
+      {GOOGLE_CLIENT_ID && (
+        <>
+          <div className="my-6 flex items-center gap-3 text-xs text-[var(--text-faint)]">
+            <span className="h-px flex-1 bg-[var(--border-default)]" />
+            or
+            <span className="h-px flex-1 bg-[var(--border-default)]" />
+          </div>
+          <GoogleButton onToken={loginWithGoogle} onError={setError} />
+        </>
+      )}
     </main>
   );
 }

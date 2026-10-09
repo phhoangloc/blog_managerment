@@ -24,6 +24,7 @@ import { CommentService } from '../services/CommentService';
 import { LikeService } from '../services/LikeService';
 import { Broadcaster } from '../services/RealtimeHub';
 import { AuthService } from '../services/AuthService';
+import { GoogleAuthVerifier } from '../services/GoogleVerifier';
 import { AvatarResolver } from '../services/AvatarResolver';
 import { FileService } from '../services/FileService';
 import { LocalFileStorage } from '../services/FileStorage';
@@ -36,6 +37,7 @@ import {
   createCommentSchema,
   createUserSchema,
   likeSchema,
+  googleLoginSchema,
   loginSchema,
   updateAdminSchema,
   updateBlogSchema,
@@ -62,7 +64,9 @@ export function buildRouter(hub: Broadcaster): Router {
   const fileRepo = new PrismaFileRepository(prisma);
   const avatars = new AvatarResolver(fileRepo);
 
-  const authCtl = new AuthController(new AuthService(adminRepo, userRepo, hasher, tokens));
+  const authCtl = new AuthController(
+    new AuthService(adminRepo, userRepo, hasher, tokens, env.googleClientId ? new GoogleAuthVerifier(env.googleClientId) : undefined),
+  );
   const adminCtl = new AdminController(new AdminService(adminRepo, hasher));
   const userCtl = new UserController(new UserService(userRepo, hasher, avatars));
   const blogRepo = new PrismaBlogRepository(prisma);
@@ -85,6 +89,7 @@ export function buildRouter(hub: Broadcaster): Router {
   const router = Router();
 
   router.post('/auth/login', validateBody(loginSchema), h(authCtl.login));
+  router.post('/auth/google', validateBody(googleLoginSchema), h(authCtl.google));
 
   // /me must be registered before /:id
   router.get('/admins', authed, adminOnly, h(adminCtl.list));
