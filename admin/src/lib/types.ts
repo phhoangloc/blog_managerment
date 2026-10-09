@@ -22,6 +22,8 @@ export interface Blog {
   authorRole: string;
   authorId: number;
   authorName: string;
+  likeCount: number;
+  commentCount: number;
   createdAt?: string;
   updatedAt?: string;
 }

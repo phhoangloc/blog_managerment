@@ -2,6 +2,7 @@ import Link from "next/link";
 import { API_URL } from "@/lib/api";
 import { formatDateDots, stripHtml } from "@/lib/files";
 import type { Blog } from "@/lib/types";
+import BlogCounts from "./BlogCounts";
 
 // Vertical card: image on top, then tags, title, author/date and excerpt. Same limits and font sizes as the blog view page (max 820px, cover up to 420px tall).
 export default function BlogCard({ blog: b }: { blog: Blog }) {
@@ -30,6 +31,7 @@ export default function BlogCard({ blog: b }: { blog: Blog }) {
         {/* author and date sit above the detail */}
         <span className="text-sm text-neutral-700 opacity-50">{b.authorName} · {formatDateDots(b.createdAt)}</span>
         <p className="m-0 line-clamp-3 text-[17px] leading-[1.75] text-neutral-700">{stripHtml(b.detail) || "No content yet"}</p>
+        <BlogCounts likes={b.likeCount} comments={b.commentCount} />
 
       </div>
     </article>

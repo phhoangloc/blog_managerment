@@ -145,4 +145,29 @@ describe('BlogService', () => {
       await expect(service.getPublished('nope')).rejects.toMatchObject({ statusCode: 404 });
     });
   });
+
+  describe('like and comment counts', () => {
+    const stats = { likeCounts: jest.fn(), commentCounts: jest.fn() };
+    const counted = new BlogService(repo, files, users, stats);
+
+    // the file-level beforeEach resets every mock, so set the totals again
+    beforeEach(() => {
+      stats.likeCounts.mockResolvedValue(new Map([[1, 4]]));
+      stats.commentCounts.mockResolvedValue(new Map([[1, 2]]));
+    });
+
+    it('adds the totals to every response, including the logged-in ones', async () => {
+      repo.findAll.mockResolvedValue([blog({ id: 1 }), blog({ id: 2, slug: 'other' })]);
+      const list = await counted.list(admin);
+      expect(list.map((b) => [b.likeCount, b.commentCount])).toEqual([[4, 2], [0, 0]]);
+
+      repo.findBySlug.mockResolvedValue(blog({ id: 1 }));
+      expect(await counted.get('hello', admin)).toMatchObject({ likeCount: 4, commentCount: 2 });
+    });
+
+    it('reports 0 when no stats provider is wired', async () => {
+      repo.findAll.mockResolvedValue([blog()]);
+      expect((await service.list(admin))[0]).toMatchObject({ likeCount: 0, commentCount: 0 });
+    });
+  });
 });

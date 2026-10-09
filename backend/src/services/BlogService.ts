@@ -43,13 +43,13 @@ export class BlogService {
 
   // public reader site: published blogs only, no auth
   async listPublished() {
-    return this.withCounts(await this.toPublic(await this.blogs.findAll({ draft: false })));
+    return this.toPublic(await this.blogs.findAll({ draft: false }));
   }
 
   async getPublished(slug: string) {
     const blog = await this.blogs.findBySlug(slug);
     if (!blog || blog.draft) throw new AppError(404, 'Blog not found');
-    return (await this.withCounts(await this.toPublic([blog])))[0];
+    return (await this.toPublic([blog]))[0];
   }
 
   async get(slug: string, actor: Actor) {
@@ -105,23 +105,21 @@ export class BlogService {
     if (!(await this.files.findById(coverId))) throw new AppError(400, 'Cover file not found');
   }
 
-  private async withCounts<T extends { id: number }>(rows: T[]) {
-    const likes = this.stats ? await this.stats.likeCounts() : new Map<number, number>();
-    const comments = this.stats ? await this.stats.commentCounts() : new Map<number, number>();
-    return rows.map((b) => ({ ...b, likeCount: likes.get(b.id) ?? 0, commentCount: comments.get(b.id) ?? 0 }));
-  }
-
-  // adds coverUrl and authorName for display
+  // adds coverUrl, authorName and the like / comment totals for display
   private async toPublic(rows: BlogEntity[]) {
     const covers = new Map<number, string>();
     if (rows.some((b) => b.coverId != null)) (await this.files.findAll()).forEach((f) => covers.set(f.id, f.filename));
     const names = new Map<number, string>();
     if (rows.length) (await this.users.findAll()).forEach((u) => names.set(u.id, u.username));
+    const likes = this.stats && rows.length ? await this.stats.likeCounts() : new Map<number, number>();
+    const comments = this.stats && rows.length ? await this.stats.commentCounts() : new Map<number, number>();
 
     return rows.map((b) => ({
       ...b,
       coverUrl: b.coverId != null && covers.has(b.coverId) ? fileUrlOf(covers.get(b.coverId)!) : null,
       authorName: names.get(b.authorId) ?? 'Unknown',
+      likeCount: likes.get(b.id) ?? 0,
+      commentCount: comments.get(b.id) ?? 0,
     }));
   }
 }

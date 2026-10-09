@@ -29,9 +29,13 @@ export default function BlogListPage() {
       </header>
       {error && <p className="m-0 text-sm text-[#a63a2a]">{error}</p>}
 
-      {/* cards stacked vertically, same width limit as the view page, aligned left with the heading */}
-      <div className="flex flex-col items-start gap-6">
-        {blogs?.map((b) => <BlogCard key={b.id} blog={b} />)}
+      {/* cards stacked vertically, same width limit as the view page, aligned left with the heading; a rule and extra space tell one post from the next */}
+      <div className="flex flex-col items-start">
+        {blogs?.map((b) => (
+          <div key={b.id} className="w-full max-w-[820px] border-t border-neutral-300 py-12 first:border-t-0 first:pt-0">
+            <BlogCard blog={b} />
+          </div>
+        ))}
       </div>
       {blogs && blogs.length === 0 && (
         <p className="m-0 p-6 text-neutral-700">{isUser ? "No published blogs yet. Use New blog to write one." : "No published blogs yet."}</p>
