@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import {
   AdminInput,
   BlogInput,
+  ICommentRepository,
+  ILikeRepository,
   IAdminRepository,
   IBlogRepository,
   IFileRepository,
@@ -97,5 +99,46 @@ export class PrismaFileRepository implements IFileRepository {
   }
   async delete(id: number) {
     await this.db.file.delete({ where: { id } });
+  }
+}
+
+export class PrismaCommentRepository implements ICommentRepository {
+  constructor(private readonly db: PrismaClient) {}
+  findAll(filter?: { userId?: number; blogId?: number; hidden?: boolean }) {
+    return this.db.comment.findMany({ where: filter, orderBy: { id: 'asc' } });
+  }
+  findById(id: number) {
+    return this.db.comment.findUnique({ where: { id } });
+  }
+  create(data: { userId: number; blogId: number; content: string }) {
+    return this.db.comment.create({ data });
+  }
+  update(id: number, data: { content?: string; hidden?: boolean }) {
+    return this.db.comment.update({ where: { id }, data });
+  }
+  async delete(id: number) {
+    await this.db.comment.delete({ where: { id } });
+  }
+  async countsByBlog() {
+    const rows = await this.db.comment.groupBy({ by: ['blogId'], where: { hidden: false }, _count: { _all: true } });
+    return new Map(rows.map((r) => [r.blogId, r._count._all]));
+  }
+}
+
+export class PrismaLikeRepository implements ILikeRepository {
+  constructor(private readonly db: PrismaClient) {}
+  find(userId: number, blogId: number) {
+    return this.db.like.findUnique({ where: { userId_blogId: { userId, blogId } } });
+  }
+  set(userId: number, blogId: number, like: boolean) {
+    return this.db.like.upsert({
+      where: { userId_blogId: { userId, blogId } },
+      update: { like },
+      create: { userId, blogId, like },
+    });
+  }
+  async countsByBlog() {
+    const rows = await this.db.like.groupBy({ by: ['blogId'], where: { like: true }, _count: { _all: true } });
+    return new Map(rows.map((r) => [r.blogId, r._count._all]));
   }
 }

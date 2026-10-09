@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { excerptOf, formatDate, readTime } from "@/lib/format";
 import type { Blog } from "@/lib/types";
+import Counts from "./Counts";
 import CoverImage from "./CoverImage";
 
 export default function BlogCard({ blog }: { blog: Blog }) {
@@ -23,6 +24,9 @@ export default function BlogCard({ blog }: { blog: Blog }) {
         <p className="mt-2 line-clamp-2 font-[family-name:var(--font-serif)] text-[19px] leading-normal text-[var(--text-muted)]">
           {excerptOf(blog.detail)}
         </p>
+        <div className="mt-3">
+          <Counts likes={blog.likeCount} comments={blog.commentCount} />
+        </div>
       </div>
     </article>
   );

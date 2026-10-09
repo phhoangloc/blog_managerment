@@ -3,6 +3,7 @@ import { env } from '../config/env';
 import { prisma } from '../config/prisma';
 import { AdminController } from '../controllers/AdminController';
 import { BlogController } from '../controllers/BlogController';
+import { CommentController } from '../controllers/CommentController';
 import { AuthController } from '../controllers/AuthController';
 import { FileController } from '../controllers/FileController';
 import { UserController } from '../controllers/UserController';
@@ -12,11 +13,16 @@ import { validateBody } from '../middleware/validate.middleware';
 import {
   PrismaAdminRepository,
   PrismaBlogRepository,
+  PrismaCommentRepository,
+  PrismaLikeRepository,
   PrismaFileRepository,
   PrismaUserRepository,
 } from '../repositories/prismaRepositories';
 import { AdminService } from '../services/AdminService';
 import { BlogService } from '../services/BlogService';
+import { CommentService } from '../services/CommentService';
+import { LikeService } from '../services/LikeService';
+import { Broadcaster } from '../services/RealtimeHub';
 import { AuthService } from '../services/AuthService';
 import { AvatarResolver } from '../services/AvatarResolver';
 import { FileService } from '../services/FileService';
@@ -27,10 +33,13 @@ import { JwtTokenService } from '../utils/tokenService';
 import {
   createAdminSchema,
   createBlogSchema,
+  createCommentSchema,
   createUserSchema,
+  likeSchema,
   loginSchema,
   updateAdminSchema,
   updateBlogSchema,
+  updateCommentSchema,
   updateFileSchema,
   updateUserSchema,
   uploadFileSchema,
@@ -44,7 +53,7 @@ const h =
   };
 
 // Composition root: wires concrete implementations to abstractions
-export function buildRouter(): Router {
+export function buildRouter(hub: Broadcaster): Router {
   const hasher = new BcryptPasswordHasher();
   const tokens = new JwtTokenService(env.jwtSecret, env.jwtExpiresIn);
   const userRepo = new PrismaUserRepository(prisma);
@@ -56,8 +65,18 @@ export function buildRouter(): Router {
   const authCtl = new AuthController(new AuthService(adminRepo, userRepo, hasher, tokens));
   const adminCtl = new AdminController(new AdminService(adminRepo, hasher));
   const userCtl = new UserController(new UserService(userRepo, hasher, avatars));
+  const blogRepo = new PrismaBlogRepository(prisma);
+  const commentRepo = new PrismaCommentRepository(prisma);
+  const likeRepo = new PrismaLikeRepository(prisma);
   const blogCtl = new BlogController(
-    new BlogService(new PrismaBlogRepository(prisma), fileRepo, userRepo),
+    new BlogService(blogRepo, fileRepo, userRepo, {
+      likeCounts: () => likeRepo.countsByBlog(),
+      commentCounts: () => commentRepo.countsByBlog(),
+    }),
+  );
+  const commentCtl = new CommentController(
+    new CommentService(commentRepo, blogRepo, userRepo, avatars, hub),
+    new LikeService(likeRepo, blogRepo, hub),
   );
   const fileCtl = new FileController(new FileService(fileRepo, new LocalFileStorage(env.uploadDir), userRepo));
 
@@ -88,6 +107,7 @@ export function buildRouter(): Router {
   // public reader site: published blogs, no token
   router.get('/public/blogs', h(blogCtl.listPublic));
   router.get('/public/blogs/:slug', h(blogCtl.getPublic));
+  router.get('/public/blogs/:slug/comments', h(commentCtl.listPublic));
 
   // blogs: only users create; admin can view/edit/delete all, a user only their own (enforced in BlogService)
   router.get('/blogs', authed, h(blogCtl.list));
@@ -95,6 +115,15 @@ export function buildRouter(): Router {
   router.get('/blogs/:slug', authed, h(blogCtl.get));
   router.put('/blogs/:slug', authed, validateBody(updateBlogSchema), h(blogCtl.update));
   router.delete('/blogs/:slug', authed, h(blogCtl.remove));
+
+  // comments and likes: users write their own; admins view/edit/delete every comment and cannot like
+  router.post('/blogs/:slug/comments', authed, requireRole('user'), validateBody(createCommentSchema), h(commentCtl.create));
+  router.get('/blogs/:slug/like', authed, requireRole('user'), h(commentCtl.getLike));
+  router.put('/blogs/:slug/like', authed, requireRole('user'), validateBody(likeSchema), h(commentCtl.setLike));
+  router.get('/comments', authed, h(commentCtl.list));
+  router.get('/comments/:id', authed, h(commentCtl.get));
+  router.put('/comments/:id', authed, validateBody(updateCommentSchema), h(commentCtl.update));
+  router.delete('/comments/:id', authed, h(commentCtl.remove));
 
   // files: only users upload; admin can view/edit/delete all, a user only their own (enforced in FileService)
   router.get('/files', authed, h(fileCtl.list));

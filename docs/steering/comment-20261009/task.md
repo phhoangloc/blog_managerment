@@ -1,0 +1,11 @@
+# Tasks: comment-20261009
+- [x] 1. Prisma: Comment + Like models, migration
+- [x] 2. Repositories (comment, like, counts) + validators
+- [x] 3. CommentService / LikeService (permissions, published-only, hidden rules)
+- [x] 4. RealtimeHub (ws) + broadcast from services, attach in server.ts
+- [x] 5. Controllers + routes; counts in public blog responses
+- [x] 6. Backend tests (services, hub, validation) ; tsc + jest
+- [x] 7. Admin: Comment nav, list page, edit page (content, hidden, delete)
+- [x] 8. Home: login page + auth, header login/logout
+- [x] 9. Home: counts on cards, like button, comment list + form, live updates
+- [x] 10. Verify (API with curl, WebSocket, admin + home in browser)

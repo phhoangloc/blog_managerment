@@ -66,3 +66,11 @@ export const updateFileSchema = z.object({
   name: fileName.optional(),
   detail: fileDetail.optional(),
 });
+
+const commentContent = z.string().trim().min(1, 'content is required').max(2000);
+export const createCommentSchema = z.object({ content: commentContent });
+export const updateCommentSchema = z
+  .object({ content: commentContent, hidden: z.boolean() })
+  .partial()
+  .refine((v) => Object.keys(v).length > 0, 'at least one field is required');
+export const likeSchema = z.object({ like: z.boolean() });

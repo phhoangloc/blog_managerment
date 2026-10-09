@@ -1,5 +1,14 @@
 import { validateBody } from '../../src/middleware/validate.middleware';
-import { createBlogSchema, createUserSchema, loginSchema, updateBlogSchema, uploadFileSchema } from '../../src/validators/schemas';
+import {
+  createBlogSchema,
+  createCommentSchema,
+  createUserSchema,
+  likeSchema,
+  loginSchema,
+  updateBlogSchema,
+  updateCommentSchema,
+  uploadFileSchema,
+} from '../../src/validators/schemas';
 
 const run = (schema: any, body: any) => {
   const req: any = { body };
@@ -46,5 +55,23 @@ describe('validateBody', () => {
     expect(run(createBlogSchema, { title: 'x', slug: 'Bad Slug' }).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
     expect(run(updateBlogSchema, {}).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
     expect(run(updateBlogSchema, { draft: false, coverId: null }).next).toHaveBeenCalledWith();
+  });
+
+  it('comment content is trimmed, required and capped at 2000 characters', () => {
+    expect(run(createCommentSchema, { content: '  hi  ' }).req.body).toEqual({ content: 'hi' });
+    expect(run(createCommentSchema, { content: '   ' }).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
+    expect(run(createCommentSchema, { content: 'x'.repeat(2001) }).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
+  });
+
+  it('comment update accepts content and/or hidden but not an empty body', () => {
+    expect(run(updateCommentSchema, {}).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
+    expect(run(updateCommentSchema, { hidden: 'yes' }).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
+    expect(run(updateCommentSchema, { hidden: true }).next).toHaveBeenCalledWith();
+  });
+
+  it('like needs a boolean', () => {
+    expect(run(likeSchema, { like: true }).next).toHaveBeenCalledWith();
+    expect(run(likeSchema, { like: 'true' }).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
+    expect(run(likeSchema, {}).next.mock.calls[0][0]).toMatchObject({ statusCode: 400 });
   });
 });

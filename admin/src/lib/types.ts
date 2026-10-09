@@ -36,3 +36,18 @@ export interface FileItem {
   createdAt?: string;
   url: string;
 }
+
+// a comment on a published blog; hidden ones are visible to admins only
+export interface BlogComment {
+  id: number;
+  userId: number;
+  blogId: number;
+  content: string;
+  hidden: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  userName: string;
+  avatarUrl: string | null;
+  blogTitle: string;
+  blogSlug: string;
+}

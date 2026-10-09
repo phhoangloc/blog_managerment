@@ -22,11 +22,18 @@ type UpdateInput = Partial<CreateInput>;
 // Admins edit/delete every blog; users manage only the ones they wrote
 const canAccess = (blog: BlogEntity, actor: Actor) => actor.role === 'admin' || blog.authorId === actor.id;
 
+// like / comment totals per blog id, shown on the public site
+export interface BlogStats {
+  likeCounts(): Promise<Map<number, number>>;
+  commentCounts(): Promise<Map<number, number>>;
+}
+
 export class BlogService {
   constructor(
     private readonly blogs: IBlogRepository,
     private readonly files: Pick<IFileRepository, 'findById' | 'findAll'>,
     private readonly users: { findAll(): Promise<{ id: number; username: string }[]> },
+    private readonly stats?: BlogStats,
   ) {}
 
   async list(actor: Actor) {
@@ -36,13 +43,13 @@ export class BlogService {
 
   // public reader site: published blogs only, no auth
   async listPublished() {
-    return this.toPublic(await this.blogs.findAll({ draft: false }));
+    return this.withCounts(await this.toPublic(await this.blogs.findAll({ draft: false })));
   }
 
   async getPublished(slug: string) {
     const blog = await this.blogs.findBySlug(slug);
     if (!blog || blog.draft) throw new AppError(404, 'Blog not found');
-    return (await this.toPublic([blog]))[0];
+    return (await this.withCounts(await this.toPublic([blog])))[0];
   }
 
   async get(slug: string, actor: Actor) {
@@ -96,6 +103,12 @@ export class BlogService {
   private async assertCover(coverId?: number | null) {
     if (coverId == null) return;
     if (!(await this.files.findById(coverId))) throw new AppError(400, 'Cover file not found');
+  }
+
+  private async withCounts<T extends { id: number }>(rows: T[]) {
+    const likes = this.stats ? await this.stats.likeCounts() : new Map<number, number>();
+    const comments = this.stats ? await this.stats.commentCounts() : new Map<number, number>();
+    return rows.map((b) => ({ ...b, likeCount: likes.get(b.id) ?? 0, commentCount: comments.get(b.id) ?? 0 }));
   }
 
   // adds coverUrl and authorName for display

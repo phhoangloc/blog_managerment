@@ -34,6 +34,39 @@ export interface BlogEntity {
   updatedAt?: Date;
 }
 
+export interface CommentEntity {
+  id: number;
+  userId: number;
+  blogId: number;
+  content: string;
+  hidden: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface LikeEntity {
+  userId: number;
+  blogId: number;
+  like: boolean;
+}
+
+export interface ICommentRepository {
+  findAll(filter?: { userId?: number; blogId?: number; hidden?: boolean }): Promise<CommentEntity[]>;
+  findById(id: number): Promise<CommentEntity | null>;
+  create(data: { userId: number; blogId: number; content: string }): Promise<CommentEntity>;
+  update(id: number, data: { content?: string; hidden?: boolean }): Promise<CommentEntity>;
+  delete(id: number): Promise<void>;
+  /** visible (not hidden) comments per blog id */
+  countsByBlog(): Promise<Map<number, number>>;
+}
+
+export interface ILikeRepository {
+  find(userId: number, blogId: number): Promise<LikeEntity | null>;
+  set(userId: number, blogId: number, like: boolean): Promise<LikeEntity>;
+  /** rows with like = true per blog id */
+  countsByBlog(): Promise<Map<number, number>>;
+}
+
 export type BlogInput = Omit<BlogEntity, 'id' | 'createdAt' | 'updatedAt'>;
 
 export interface IBlogRepository {

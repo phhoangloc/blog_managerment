@@ -19,52 +19,86 @@ model Admin {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
   password  String
-  email     String   @unique
+  email     String    @unique
   avatarId  Int?
-  avatar    File?    @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: SetNull)
-  blogs     Blog[]   @relation("BlogAuthor")
-  files     File[]   @relation("FileOwner")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  avatar    File?     @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: SetNull)
+  blogs     Blog[]    @relation("BlogAuthor")
+  files     File[]    @relation("FileOwner")
+  comments  Comment[]
+  likes     Like[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([avatarId])
   @@map("user")
 }
 
 model File {
-  id           Int      @id @default(autoincrement())
-  name         String   @unique
-  detail       String   @default("") @db.Text
-  filename     String
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  detail      String   @default("") @db.Text
+  filename    String
   // owner; null only for legacy files uploaded by an admin before uploads became user-only
-  userId       Int?
-  owner        User?    @relation("FileOwner", fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  userAvatars  User[]   @relation("UserAvatar")
-  blogCovers   Blog[]   @relation("BlogCover")
+  userId      Int?
+  owner       User?    @relation("FileOwner", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  userAvatars User[]   @relation("UserAvatar")
+  blogCovers  Blog[]   @relation("BlogCover")
 
   @@index([userId])
   @@map("file")
 }
 
 model Blog {
-  id         Int      @id @default(autoincrement())
-  title      String
-  slug       String   @unique
-  detail     String   @default("") @db.Text
-  category   String   @default("General")
-  draft      Boolean  @default(true)
-  coverId    Int?
-  cover      File?    @relation("BlogCover", fields: [coverId], references: [id], onDelete: SetNull)
-  authorId   Int
-  author     User     @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  title     String
+  slug      String    @unique
+  detail    String    @default("") @db.Text
+  category  String    @default("General")
+  draft     Boolean   @default(true)
+  coverId   Int?
+  cover     File?     @relation("BlogCover", fields: [coverId], references: [id], onDelete: SetNull)
+  authorId  Int
+  author    User      @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
+  likes     Like[]
 
   @@index([coverId])
   @@index([authorId])
   @@map("blog")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blogId    Int
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  content   String   @db.Text
+  hidden    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([blogId])
+  @@map("comment")
+}
+
+// one row per (user, blog); liking again flips the boolean
+model Like {
+  id     Int     @id @default(autoincrement())
+  userId Int
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blogId Int
+  blog   Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  like   Boolean
+
+  @@unique([userId, blogId])
+  @@index([blogId])
+  @@map("like")
 }

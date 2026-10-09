@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BlogEngagement from "@/components/BlogEngagement";
 import CopyLinkButton from "@/components/CopyLinkButton";
 import CoverImage from "@/components/CoverImage";
 import Footer from "@/components/Footer";
 import Prose from "@/components/Prose";
-import { getBlog, getBlogs } from "@/lib/api";
+import { getBlog, getBlogs, getComments } from "@/lib/api";
 import { excerptOf, formatDate, readTime } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,7 @@ export default async function BlogPage({ params }: Props) {
   if (!blog) notFound();
 
   // list is newest first, so the "next" post is the older one
-  const all = await getBlogs().catch(() => []);
+  const [all, comments] = await Promise.all([getBlogs().catch(() => []), getComments(blog.slug)]);
   const next = all[all.findIndex((b) => b.slug === blog.slug) + 1];
 
   return (
@@ -49,7 +50,8 @@ export default async function BlogPage({ params }: Props) {
           <div className="mt-10">
             <Prose html={blog.detail} />
           </div>
-          <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--border-default)] pt-5">
+          <BlogEngagement slug={blog.slug} initialLikes={blog.likeCount} initialComments={comments} />
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--border-default)] pt-5">
             <CopyLinkButton />
             {next && (
               <Link
