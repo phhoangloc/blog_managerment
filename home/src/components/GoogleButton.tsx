@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-const SCRIPT = "https://accounts.google.com/gsi/client";
+const SCRIPT = "https://accounts.google.com/gsi/client?hl=ja";
 
 function loadScript(): Promise<void> {
   if (window.google?.accounts) return Promise.resolve();
@@ -23,12 +23,12 @@ function loadScript(): Promise<void> {
     const existing = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT}"]`);
     const script = existing ?? Object.assign(document.createElement("script"), { src: SCRIPT, async: true });
     script.addEventListener("load", () => resolve());
-    script.addEventListener("error", () => reject(new Error("Could not load Google sign-in")));
+    script.addEventListener("error", () => reject(new Error("Googleログインを読み込めませんでした")));
     if (!existing) document.head.appendChild(script);
   });
 }
 
-// "Log in with Google": Google returns an ID token that onToken sends to the backend
+// "Googleでログイン": Google returns an ID token that onToken sends to the backend
 export default function GoogleButton({ onToken, onError }: { onToken: (idToken: string) => void; onError: (message: string) => void }) {
   const box = useRef<HTMLDivElement>(null);
   const handlers = useRef({ onToken, onError });
@@ -46,7 +46,7 @@ export default function GoogleButton({ onToken, onError }: { onToken: (idToken: 
           client_id: GOOGLE_CLIENT_ID,
           callback: (r) => handlers.current.onToken(r.credential),
         });
-        window.google.accounts.id.renderButton(box.current, { type: "standard", theme: "outline", size: "large", text: "signin_with", width: 400 });
+        window.google.accounts.id.renderButton(box.current, { type: "standard", theme: "outline", size: "large", text: "signin_with", locale: "ja", width: 400 });
       })
       .catch((e: Error) => handlers.current.onError(e.message));
     return () => {

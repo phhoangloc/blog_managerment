@@ -16,7 +16,7 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const blog = await getBlog(slug).catch(() => null);
-  return blog ? { title: `${blog.title} — locpham`, description: excerptOf(blog.detail, 160) } : { title: "Not found — locpham" };
+  return blog ? { title: `${blog.title} — locpham`, description: excerptOf(blog.detail, 160) } : { title: "見つかりません — locpham" };
 }
 
 export default async function BlogPage({ params }: Props) {
@@ -30,23 +30,23 @@ export default async function BlogPage({ params }: Props) {
 
   return (
     <>
-      <CoverImage muted fadeRight src={blog.coverUrl} alt={blog.title} className="fixed bottom-0 left-0 top-0 hidden w-1/2 md:block" />
-      <main className="px-6 pb-24 pt-6 md:ml-[50vw] md:px-14">
-        <div className="max-w-[var(--content-width)]">
+      <CoverImage muted fadeRight src={blog.coverUrl} alt={blog.title} className="fixed bottom-0 left-0 top-0 hidden w-1/2 min-[992px]:block" />
+      <main className="px-6 pb-24 pt-6 min-[992px]:ml-[50vw] min-[992px]:px-14">
+        <div className="min-[992px]:max-w-[var(--content-width)]">
           <Link href="/" className="text-[13px] text-[var(--text-subtle)] no-underline hover:text-[var(--text-body)]">
-            ← All posts
+            ← 記事一覧
           </Link>
           <div className="mb-3.5 mt-10 flex flex-wrap items-center gap-3.5 font-[family-name:var(--font-mono)] text-xs text-[var(--text-subtle)]">
             <span>{formatDate(blog.createdAt)}</span>
             <span>{readTime(blog.detail)}</span>
             <span>#{blog.category}</span>
-            <span>by {blog.authorName}</span>
+            <span>{blog.authorName}</span>
           </div>
-          <h1 className="font-[family-name:var(--font-serif)] text-[clamp(34px,4vw,48px)] font-medium leading-[1.08] tracking-[var(--tracking-display)] [text-wrap:balance]">
+          <h1 className="font-[family-name:var(--font-heading)] text-[clamp(24px,2.8vw,36px)] font-normal leading-[1.4] [word-break:auto-phrase] [text-wrap:balance]">
             {blog.title}
           </h1>
-          {/* below md the fixed left image is hidden, so show the cover between title and content */}
-          {blog.coverUrl && <CoverImage muted src={blog.coverUrl} alt={blog.title} className="relative mt-8 aspect-[16/10] rounded-md md:hidden" />}
+          {/* below 992px the fixed left image is hidden, so show the cover between title and content */}
+          <CoverImage muted src={blog.coverUrl} alt={blog.title} className="relative mt-8 aspect-[16/10] rounded-md min-[992px]:hidden" />
           <div className="mt-10">
             <Prose html={blog.detail} />
           </div>
@@ -64,7 +64,7 @@ export default async function BlogPage({ params }: Props) {
           </div>
         </div>
       </main>
-      <div className="md:ml-[50vw]">
+      <div className="min-[992px]:ml-[50vw]">
         <Footer />
       </div>
     </>

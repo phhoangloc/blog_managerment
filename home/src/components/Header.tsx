@@ -27,9 +27,9 @@ export default function Header() {
         if (err instanceof ApiError && [401, 403, 404].includes(err.status)) clearToken();
       });
   }, [token]);
-  // on split-layout pages (blog detail, about; md+) the left half is an image panel, so the logo moves to the start of the content column
+  // on split-layout pages (home, blog detail, about; 992px+) the left half is an image panel, so the logo moves to the start of the content column
   // (50vw + the column's 56px padding - the header's 24px gutter)
-  const splitLayout = path.startsWith("/blog/") || path === "/about";
+  const splitLayout = path === "/" || path.startsWith("/blog/") || path === "/about";
   const link = (href: string, label: string, active: boolean) => (
     <Link
       href={href}
@@ -44,22 +44,22 @@ export default function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-30 h-[72px]">
       <div className="flex h-full items-center justify-between gap-6 px-[var(--page-gutter)]">
-        <Link href="/" className={`font-[family-name:var(--font-serif)] text-[22px] font-medium tracking-[var(--tracking-display)] no-underline ${splitLayout ?"md:ml-[calc(50vw+32px)]" : ""} text-[var(--text-body)] hover:text-[var(--text-body)]`}>
+        <Link href="/" className={`font-[family-name:var(--font-serif)] text-[22px] font-medium tracking-[var(--tracking-display)] no-underline ${splitLayout ?"min-[992px]:ml-[calc(50vw+32px)]" : ""} text-[var(--text-body)] hover:text-[var(--text-body)]`}>
           locpham
         </Link>
         <nav className="flex items-center gap-6">
-          {link("/", "blog", path === "/" || path.startsWith("/blog"))}
-          {link("/about", "about", path === "/about")}
+          {link("/", "ブログ", path === "/" || path.startsWith("/blog"))}
+          {link("/about", "紹介", path === "/about")}
           {ready &&
             (token ? (
               <div className="flex items-center gap-3">
                 <Avatar name={me?.username ?? "?"} url={me?.avatarUrl ?? null} size={28} />
                 <button type="button" onClick={clearToken} className="font-[family-name:var(--font-ui)] text-[15px] text-[var(--text-subtle)] hover:text-[var(--text-body)]">
-                  logout
+                  ログアウト
                 </button>
               </div>
             ) : (
-              link("/login", "login", path === "/login")
+              link("/login", "ログイン", path === "/login")
             ))}
           <ThemeToggle />
         </nav>

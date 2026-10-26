@@ -16,12 +16,12 @@ export default function BlogCard({ blog }: { blog: Blog }) {
           <span>#{blog.category}</span>
           <span className="text-[var(--text-faint)]">{readTime(blog.detail)}</span>
         </div>
-        <h2 className="mt-3 text-[clamp(30px,4.5vw,48px)] font-medium leading-[1.15] tracking-[var(--tracking-display)] [text-wrap:balance] font-[family-name:var(--font-serif)]">
+        <h2 className="mt-3 text-[clamp(22px,2.8vw,30px)] font-normal leading-[1.4] [word-break:auto-phrase] [text-wrap:balance] font-[family-name:var(--font-heading)]">
           <Link href={`/blog/${blog.slug}`} className="text-[var(--text-body)] no-underline after:absolute after:inset-0 group-hover:text-[var(--accent)]">
             {blog.title}
           </Link>
         </h2>
-        <p className="mt-2 line-clamp-2 font-[family-name:var(--font-serif)] text-[19px] leading-normal text-[var(--text-muted)]">
+        <p className="mt-2 line-clamp-2 font-[family-name:var(--font-serif)] text-[19px] max-[1199px]:text-[17px] leading-normal text-[var(--text-muted)]">
           {excerptOf(blog.detail)}
         </p>
         <div className="mt-3">

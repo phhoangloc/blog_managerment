@@ -31,10 +31,10 @@ function LoginForm() {
         body: JSON.stringify({ idToken }),
       });
       const data = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(data?.error ?? "Google login failed");
+      if (!res.ok) throw new Error(data?.error ?? "Googleログインに失敗しました");
       finish(data.token);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Google login failed");
+      setError(err instanceof Error ? err.message : "Googleログインに失敗しました");
     }
   }
 
@@ -49,10 +49,10 @@ function LoginForm() {
         body: JSON.stringify({ role: "user", username, password }),
       });
       const data = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(data?.error ?? "Login failed");
+      if (!res.ok) throw new Error(data?.error ?? "ログインに失敗しました");
       finish(data.token);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : "ログインに失敗しました");
     } finally {
       setBusy(false);
     }
@@ -63,15 +63,15 @@ function LoginForm() {
 
   return (
     <main className="mx-auto max-w-[400px] px-6 pt-16">
-      <h1 className="font-[family-name:var(--font-serif)] text-5xl font-medium tracking-[var(--tracking-display)]">Log in</h1>
-      <p className="mt-3 font-[family-name:var(--font-serif)] text-lg text-[var(--text-muted)]">Log in to like and comment on posts.</p>
+      <h1 className="font-[family-name:var(--font-heading)] text-4xl max-[1199px]:text-[32px] font-normal">ログイン</h1>
+      <p className="mt-3 font-[family-name:var(--font-serif)] text-lg max-[1199px]:text-base text-[var(--text-muted)]">ログインすると、いいねやコメントができます。</p>
       <form onSubmit={submit} className="mt-8 flex flex-col gap-4">
         <label className="flex flex-col gap-1.5 text-sm text-[var(--text-subtle)]">
-          Username
+          ユーザー名
           <input className={input} value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" required />
         </label>
         <label className="flex flex-col gap-1.5 text-sm text-[var(--text-subtle)]">
-          Password
+          パスワード
           <input className={input} type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
         </label>
         {error && (
@@ -83,14 +83,14 @@ function LoginForm() {
           disabled={busy}
           className="mt-2 h-11 rounded-md bg-[var(--accent)] text-[15px] font-medium text-[var(--on-accent)] hover:bg-[var(--accent-hover)] disabled:opacity-60"
         >
-          {busy ? "Logging in…" : "Log in"}
+          {busy ? "ログイン中…" : "ログイン"}
         </button>
       </form>
       {GOOGLE_CLIENT_ID && (
         <>
           <div className="my-6 flex items-center gap-3 text-xs text-[var(--text-faint)]">
             <span className="h-px flex-1 bg-[var(--border-default)]" />
-            or
+            または
             <span className="h-px flex-1 bg-[var(--border-default)]" />
           </div>
           <GoogleButton onToken={loginWithGoogle} onError={setError} />

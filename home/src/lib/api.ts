@@ -42,6 +42,6 @@ export async function authedFetch<T>(path: string, token: string, init: RequestI
   });
   if (res.status === 204) return undefined as T;
   const data = await res.json().catch(() => null);
-  if (!res.ok) throw new ApiError(res.status, data?.error ?? `Request failed (${res.status})`);
+  if (!res.ok) throw new ApiError(res.status, data?.error ?? `リクエストに失敗しました (${res.status})`);
   return data as T;
 }

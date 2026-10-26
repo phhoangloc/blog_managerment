@@ -68,7 +68,7 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
       setLikes(r.likeCount);
     } catch (err) {
       setLiked(!next);
-      setError(err instanceof Error ? err.message : "Could not update like");
+      setError(err instanceof Error ? err.message : "いいねを更新できませんでした");
     }
   }
 
@@ -91,7 +91,7 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
       setComments((list) => [...list.filter((x) => x.id !== c.id), c].sort(byId));
       setDraft("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not post comment");
+      setError(err instanceof Error ? err.message : "コメントを投稿できませんでした");
     } finally {
       setBusy(false);
     }
@@ -108,7 +108,7 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
       setComments((list) => list.map((x) => (x.id === c.id ? c : x)));
       setEditing(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save comment");
+      setError(err instanceof Error ? err.message : "コメントを保存できませんでした");
     }
   }
 
@@ -119,7 +119,7 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
       await authedFetch(`/comments/${id}`, token, { method: "DELETE" });
       setComments((list) => list.filter((x) => x.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not delete comment");
+      setError(err instanceof Error ? err.message : "コメントを削除できませんでした");
     }
   }
 
@@ -128,7 +128,7 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
   const small = "text-xs text-[var(--text-subtle)] hover:text-[var(--text-body)]";
 
   return (
-    <section aria-label="Likes and comments" className="mt-12 border-t border-[var(--border-default)] pt-6">
+    <section aria-label="いいねとコメント" className="mt-12 border-t border-[var(--border-default)] pt-6">
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
@@ -136,10 +136,10 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
           aria-pressed={liked}
           className={`${pill} ${liked ? "border-[var(--accent)] text-[var(--accent)]" : "text-[var(--text-body)]"}`}
         >
-          <HeartIcon filled={liked} /> {liked ? "Liked" : "Like"} · {likes}
+          <HeartIcon filled={liked} /> {liked ? "いいね済み" : "いいね"} · {likes}
         </button>
         <button type="button" onClick={focusComment} className={`${pill} text-[var(--text-body)]`}>
-          <CommentIcon /> Comment · {comments.length}
+          <CommentIcon /> コメント · {comments.length}
         </button>
       </div>
 
@@ -168,19 +168,19 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
                     className="w-full rounded-md border border-[var(--border-default)] bg-[var(--bg-raised)] p-3 text-[15px] text-[var(--text-body)] outline-none focus:border-[var(--sea-500)]"
                   />
                   <div className="flex gap-3">
-                    <button type="button" onClick={saveEdit} className={small}>Save</button>
-                    <button type="button" onClick={() => setEditing(null)} className={small}>Cancel</button>
+                    <button type="button" onClick={saveEdit} className={small}>保存</button>
+                    <button type="button" onClick={() => setEditing(null)} className={small}>キャンセル</button>
                   </div>
                 </div>
               ) : (
                 <>
-                  <p className="m-0 mt-1 whitespace-pre-wrap break-words font-[family-name:var(--font-serif)] text-[17px] leading-relaxed text-[var(--text-reading)]">
+                  <p className="m-0 mt-1 whitespace-pre-wrap break-words font-[family-name:var(--font-serif)] text-[17px] max-[1199px]:text-base leading-relaxed text-[var(--text-reading)]">
                     {c.content}
                   </p>
                   {userId === c.userId && (
                     <div className="mt-1 flex gap-3">
-                      <button type="button" onClick={() => setEditing({ id: c.id, text: c.content })} className={small}>Edit</button>
-                      <button type="button" onClick={() => remove(c.id)} className={small}>Delete</button>
+                      <button type="button" onClick={() => setEditing({ id: c.id, text: c.content })} className={small}>編集</button>
+                      <button type="button" onClick={() => remove(c.id)} className={small}>削除</button>
                     </div>
                   )}
                 </>
@@ -189,13 +189,13 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
           </li>
         ))}
         {comments.length === 0 && (
-          <li className="list-none font-[family-name:var(--font-serif)] italic text-[var(--text-subtle)]">No comments yet.</li>
+          <li className="list-none font-[family-name:var(--font-serif)] italic text-[var(--text-subtle)]">まだコメントはありません。</li>
         )}
       </ul>
 
       {ready && !token ? (
-        <p className="mt-8 font-[family-name:var(--font-serif)] text-[17px] text-[var(--text-muted)]">
-          <Link href={loginUrl}>Log in</Link> to like and comment.
+        <p className="mt-8 font-[family-name:var(--font-serif)] text-[17px] max-[1199px]:text-base text-[var(--text-muted)]">
+          <Link href={loginUrl}>ログイン</Link>すると、いいねやコメントができます。
         </p>
       ) : (
         <form onSubmit={submit} className="mt-8 flex flex-col gap-3">
@@ -203,17 +203,17 @@ export default function BlogEngagement({ slug, initialLikes, initialComments }: 
             ref={inputRef}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Write a comment…"
+            placeholder="コメントを書く…"
             maxLength={2000}
             rows={3}
             required
-            className="w-full rounded-md border border-[var(--border-default)] bg-[var(--bg-raised)] p-3 font-[family-name:var(--font-serif)] text-[17px] text-[var(--text-body)] outline-none focus:border-[var(--sea-500)]"
+            className="w-full rounded-md border border-[var(--border-default)] bg-[var(--bg-raised)] p-3 font-[family-name:var(--font-serif)] text-[17px] max-[1199px]:text-base text-[var(--text-body)] outline-none focus:border-[var(--sea-500)]"
           />
           <button
             disabled={busy || !draft.trim()}
             className="h-10 self-start rounded-md bg-[var(--accent)] px-5 text-sm font-medium text-[var(--on-accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50"
           >
-            {busy ? "Posting…" : "Post comment"}
+            {busy ? "投稿中…" : "コメントを投稿"}
           </button>
         </form>
       )}
