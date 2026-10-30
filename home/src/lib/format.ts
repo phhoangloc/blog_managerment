@@ -18,7 +18,7 @@ export const excerptOf = (html: string, max = 200) => {
 
 export const readTime = (html: string) => {
   const words = plainText(html).split(" ").filter(Boolean).length;
-  return `${Math.max(1, Math.round(words / 200))}分`;
+  return `${Math.max(1, Math.round(words / 200))} phút`;
 };
 
 // 2026.09.28

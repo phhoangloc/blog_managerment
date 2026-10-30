@@ -23,11 +23,11 @@ export default function CopyLinkButton() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" />
         </svg>
-        リンクをコピー
+        Sao chép liên kết
       </button>
       {done && (
         <div role="status" className="fixed bottom-7 left-1/2 z-40 -translate-x-1/2 rounded-md bg-[var(--success)] px-4 py-2.5 text-sm text-white shadow-lg">
-          リンクをコピーしました。
+          Đã sao chép liên kết.
         </div>
       )}
     </>

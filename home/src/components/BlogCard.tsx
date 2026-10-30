@@ -8,7 +8,7 @@ export default function BlogCard({ blog }: { blog: Blog }) {
   return (
     <article className="group relative flex cursor-pointer flex-col gap-5">
       <Link href={`/blog/${blog.slug}`} className="block rounded-md" aria-hidden tabIndex={-1}>
-        <CoverImage src={blog.coverUrl} alt="" className="relative aspect-[16/8] rounded-md" />
+        <CoverImage src={blog.coverUrl} alt="" zoom className="relative aspect-[16/8] rounded-md" />
       </Link>
       <div>
         <div className="flex flex-wrap items-center gap-3 font-[family-name:var(--font-mono)] text-xs tracking-wide text-[var(--text-subtle)]">
@@ -17,7 +17,7 @@ export default function BlogCard({ blog }: { blog: Blog }) {
           <span className="text-[var(--text-faint)]">{readTime(blog.detail)}</span>
         </div>
         <h2 className="mt-3 text-[clamp(22px,2.8vw,30px)] font-normal leading-[1.4] [word-break:auto-phrase] [text-wrap:balance] font-[family-name:var(--font-heading)]">
-          <Link href={`/blog/${blog.slug}`} className="text-[var(--text-body)] no-underline after:absolute after:inset-0 group-hover:text-[var(--accent)]">
+          <Link href={`/blog/${blog.slug}`} className="text-[var(--text-body)] no-underline transition-colors duration-500 after:absolute after:inset-0 group-hover:text-[var(--accent)]">
             {blog.title}
           </Link>
         </h2>

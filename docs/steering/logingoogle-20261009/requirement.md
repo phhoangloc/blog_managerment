@@ -23,7 +23,7 @@
 - Avatar from the Google profile is **not** imported (avatars are files in this system).
 
 ## Configuration (needs a Google OAuth client)
-- Create an OAuth client of type **Web application** in Google Cloud Console; add `http://localhost:3001` as an authorized JavaScript origin.
+- Create an OAuth client of type **Web application** in Google Cloud Console; add `http://localhost:3000` as an authorized JavaScript origin.
 - `backend/.env`: `GOOGLE_CLIENT_ID=<id>.apps.googleusercontent.com`
 - `home/.env.local`: `NEXT_PUBLIC_GOOGLE_CLIENT_ID=<same id>`
 - Without the id the button is hidden and the endpoint answers 503.

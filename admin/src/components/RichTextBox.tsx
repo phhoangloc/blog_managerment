@@ -88,7 +88,8 @@ export default function RichTextBox({ value, onChange, onUploadImage, placeholde
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap gap-1 rounded-[24px] bg-surface p-1">
+      <div className="sticky top-0 z-20 flex flex-col gap-2">
+      <div className="flex flex-wrap gap-1 rounded-[24px] bg-surface p-1 shadow-sm">
         {tools.map((t) => (
           <button
             key={t.title}
@@ -125,6 +126,7 @@ export default function RichTextBox({ value, onChange, onUploadImage, placeholde
           <button type="button" className="btn btn-secondary" onClick={() => setPrompt(null)}>Cancel</button>
         </div>
       )}
+      </div>
 
       <div
         ref={editorRef}
@@ -134,6 +136,13 @@ export default function RichTextBox({ value, onChange, onUploadImage, placeholde
         aria-multiline="true"
         data-placeholder={placeholder}
         onInput={emit}
+        // paste as plain text so copied styles/properties are dropped
+        onPaste={(e) => {
+          e.preventDefault();
+          const text = e.clipboardData.getData("text/plain");
+          document.execCommand("insertText", false, text);
+          emit();
+        }}
         onBlur={saveSelection}
         onKeyUp={saveSelection}
         onMouseUp={saveSelection}

@@ -20,10 +20,10 @@ export function CommentIcon() {
 export default function Counts({ likes, comments }: { likes: number; comments: number }) {
   return (
     <div className="flex items-center gap-4 font-[family-name:var(--font-mono)] text-xs text-[var(--text-subtle)]">
-      <span className="inline-flex items-center gap-1.5" title="いいね">
+      <span className="inline-flex items-center gap-1.5" title="Thích">
         <HeartIcon /> {likes}
       </span>
-      <span className="inline-flex items-center gap-1.5" title="コメント">
+      <span className="inline-flex items-center gap-1.5" title="Bình luận">
         <CommentIcon /> {comments}
       </span>
     </div>

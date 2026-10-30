@@ -16,9 +16,9 @@
   --text-reading: #34495f; --text-reading-muted: #506378;
   --highlight: var(--sea-100);
 
-  --font-serif: var(--font-body), "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
-  --font-ui: var(--font-body), "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
-  --font-heading: var(--font-zen), "Zen Antique", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-serif: var(--font-body), "Prompt", system-ui, sans-serif;
+  --font-ui: var(--font-body), "Prompt", system-ui, sans-serif;
+  --font-heading: var(--font-heading-face), "Noto Serif", Georgia, serif;
   --font-mono: var(--font-jetbrains), "SFMono-Regular", ui-monospace, monospace;
   --tracking-display: -0.015em;
   --tracking-caps: 0.08em;
@@ -52,6 +52,15 @@ body {
   a { color: var(--text-link); }
   a:hover { color: var(--text-link-hover); }
 }
+
+/* page transitions: new content rises from below, old content fades out before navigating, covers fade in */
+@keyframes rise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+.reveal { animation: rise 0.7s ease-out both; animation-delay: calc(var(--i, 0) * 90ms); }
+.cover-in { animation: fade-in 0.7s ease-in-out both; }
+body.leaving .reveal, body.leaving .cover-in { animation: fade-out 0.3s ease forwards; animation-delay: 0s; }
+@media (prefers-reduced-motion: reduce) { .reveal, .cover-in { animation: none; } }
 
 /* rich-text body of a blog */
 .prose-blog { font: 400 19px/1.75 var(--font-serif); color: color-mix(in srgb, var(--text-reading) 72%, transparent); /* softer than the title; headings, links and images keep full strength */ overflow-wrap: anywhere; }

@@ -1,32 +1,43 @@
-import Link from "next/link";
-import BlogCard from "@/components/BlogCard";
+import type { CSSProperties } from "react";
+import BlogList from "@/components/BlogList";
 import Counts from "@/components/Counts";
 import CoverImage from "@/components/CoverImage";
 import Footer from "@/components/Footer";
+import Link from "next/link";
 import { getBlogs } from "@/lib/api";
 import { excerptOf, formatDate, readTime } from "@/lib/format";
 import type { Blog } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-// the left half keeps the same edge fade as the cover (side by side only); the gradient shares the mask so the title never sits on the faded part
-const FADE = "min-[992px]:[mask-image:linear-gradient(to_right,#000_62%,transparent_100%)] min-[992px]:[-webkit-mask-image:linear-gradient(to_right,#000_62%,transparent_100%)]";
+function SiteCover() {
+  return (
+    <section className="relative -mt-[72px] h-svh min-[992px]:fixed min-[992px]:inset-y-0 min-[992px]:left-0 min-[992px]:mt-0 min-[992px]:h-auto min-[992px]:w-[50vw]">
+      <div className="absolute inset-0 bg-[var(--sea-900)]" />
+      <div className="reveal absolute inset-x-0 bottom-0 p-6 pb-10 min-[992px]:max-w-[75%] min-[992px]:p-14 min-[992px]:pb-16 text-white [text-shadow:0_1px_8px_rgba(0,0,0,.55)]">
+        <p className="font-[family-name:var(--font-serif)] text-[19px] max-[1199px]:text-[17px] italic leading-normal text-white/85">
+          Chưa có bài viết nào được đăng.
+        </p>
+      </div>
+    </section>
+  );
+}
 
+// the cover is the first post's own cover image
 function Featured({ blog }: { blog: Blog }) {
   return (
-    <article className="group relative -mt-[72px] h-svh min-[992px]:fixed min-[992px]:inset-y-0 min-[992px]:left-0 min-[992px]:mt-0 min-[992px]:h-auto min-[992px]:w-1/2">
-      <div className={`absolute inset-0 ${FADE} ${blog.coverUrl ? "" : "bg-[var(--sea-900)]"}`}>
-        <CoverImage src={blog.coverUrl} alt="" className="absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+    <article className="group relative -mt-[72px] h-svh min-[992px]:fixed min-[992px]:inset-y-0 min-[992px]:left-0 min-[992px]:mt-0 min-[992px]:h-auto min-[992px]:w-[50vw]">
+      <div className={`absolute inset-0 overflow-hidden ${blog.coverUrl ? "" : "bg-[var(--sea-900)]"}`}>
+        <CoverImage src={blog.coverUrl} alt="" zoom className="absolute inset-0 opacity-75" />
       </div>
-      <div className="absolute inset-x-0 bottom-0 p-6 pb-10 min-[992px]:max-w-[75%] min-[992px]:p-14 min-[992px]:pb-16 text-white">
+      <div className="reveal absolute inset-x-0 bottom-0 p-6 pb-10 min-[992px]:max-w-[75%] min-[992px]:p-14 min-[992px]:pb-16 text-white [text-shadow:0_1px_8px_rgba(0,0,0,.55)]">
         <div className="flex flex-wrap items-center gap-3 font-[family-name:var(--font-mono)] text-xs tracking-wide text-white/75">
           <span>{formatDate(blog.createdAt)}</span>
           <span>#{blog.category}</span>
           <span>{readTime(blog.detail)}</span>
         </div>
         <h2 className="mt-3 text-[clamp(24px,2.6vw,38px)] font-normal leading-[1.35] [word-break:auto-phrase] [text-wrap:balance] font-[family-name:var(--font-heading)]">
-          <Link href={`/blog/${blog.slug}`} className="text-white no-underline after:absolute after:inset-0 hover:text-white group-hover:underline group-hover:decoration-white/60 group-hover:underline-offset-8">
+          <Link href={`/blog/${blog.slug}`} className="text-white underline decoration-transparent underline-offset-8 transition-colors duration-500 after:absolute after:inset-0 hover:text-white group-hover:decoration-white/60">
             {blog.title}
           </Link>
         </h2>
@@ -52,27 +63,27 @@ export default async function HomePage() {
 
   return (
     <>
-      {first && <Featured blog={first} />}
-      <main className="px-6 pt-4 min-[992px]:ml-[50vw] min-[992px]:px-14">
-        {failed ? (
-          <p className="mt-16 font-[family-name:var(--font-serif)] text-lg italic text-[var(--text-subtle)]">
-            現在ブログに接続できません。しばらくしてからもう一度お試しください。
-          </p>
-        ) : blogs.length === 0 ? (
-          <p className="mt-16 font-[family-name:var(--font-serif)] text-lg italic text-[var(--text-subtle)]">まだ公開された記事はありません。</p>
-        ) : (
-          <>
-            <div className="mt-6 flex flex-col gap-[72px]">
-              {rest.map((b) => (
-                <BlogCard key={b.id} blog={b} />
-              ))}
-            </div>
-            <div className="mt-12 font-[family-name:var(--font-mono)] text-xs text-[var(--text-subtle)]">{blogs.length} 件の記事</div>
-          </>
-        )}
-      </main>
-      <div className="min-[992px]:ml-[50vw]">
-        <Footer />
+      {first ? <Featured blog={first} /> : <SiteCover />}
+      <div className="flex min-h-[calc(100svh-72px)] flex-col">
+        <main className="flex flex-1 flex-col px-6 pb-24 pt-10 min-[992px]:ml-[50vw] min-[992px]:px-14">
+          <section className="flex min-h-[calc(100svh-72px-2.5rem)] items-center justify-center">
+            <figure style={{ "--i": 1 } as CSSProperties} className="reveal mx-auto max-w-[var(--content-width)] text-center">
+              <blockquote className="font-[family-name:var(--font-serif)] italic text-[19px] max-[1199px]:text-[17px] leading-relaxed text-[var(--text-muted)]">
+                góc nhìn đơn giản cuộc sống ở Nhật - từ bài viết chia sẻ, những món ăn và nét văn hóa mình thấy thú vị.
+              </blockquote>
+            </figure>
+          </section>
+          {failed ? (
+            <p className="reveal mt-16 font-[family-name:var(--font-serif)] text-lg italic text-[var(--text-subtle)]">
+              Hiện không kết nối được tới blog. Vui lòng thử lại sau.
+            </p>
+          ) : blogs.length === 0 ? null : (
+            <BlogList blogs={rest} total={blogs.length} />
+          )}
+        </main>
+        <div className="min-[992px]:ml-[50vw]">
+          <Footer />
+        </div>
       </div>
     </>
   );

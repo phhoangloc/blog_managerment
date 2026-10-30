@@ -23,7 +23,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={dark ? "ライトモード" : "ダークモード"}
+      aria-label={dark ? "Chế độ sáng" : "Chế độ tối"}
       className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--text-subtle)] hover:bg-[var(--bg-sunken)] hover:text-[var(--text-body)]"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
